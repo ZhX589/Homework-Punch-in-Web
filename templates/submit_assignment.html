@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}提交作业{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">提交作业</h1>
+    <h2 class="h5">{{ assignment[3] }}</h2>
+    <p>截止日期：{{ assignment[6] }}</p>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="content" class="form-label">提交内容</label>
+            <textarea class="form-control" id="content" name="content" rows="5">{% if existing_submission %}{{ existing_submission[4] }}{% endif %}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">上传文件（可选）</label>
+            <input type="file" class="form-control" id="file" name="file">
+            <small class="form-text text-muted">支持图片文件</small>
+            {% if existing_submission and existing_submission[5] %}
+                <div class="mt-2">
+                    <small class="text-muted">已上传文件：</small>
+                    <a href="{{ url_for('main.download_file', filename=existing_submission[5].split('/')[-1]) }}" target="_blank">查看</a>
+                </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">{% if existing_submission %}修改作业{% else %}提交作业{% endif %}</button>
+        <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

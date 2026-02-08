@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>查看同组作业</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-bottom: 60px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #343a40;
+            z-index: 1000;
+        }
+        .bottom-nav .nav-item {
+            flex: 1;
+            text-align: center;
+        }
+        .bottom-nav .nav-link {
+            color: white;
+            padding: 12px 0;
+        }
+        .bottom-nav .nav-link.active {
+            color: #007bff;
+        }
+        .card {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="h4">查看同组作业</h1>
+        <h2 class="h5">{{ assignment[3] }}</h2>
+        <p>截止日期：{{ assignment[6] }}</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <script>
+            // 3秒后自动关闭消息弹窗
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.animation = 'fadeOut 0.3s ease-in-out';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 300);
+                });
+            }, 3000);
+        </script>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>学生姓名</th>
+                        <th>提交内容</th>
+                        <th>提交文件</th>
+                        <th>提交时间</th>
+                        <th>评分</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ submission[9] }}</td>
+                        <td>{{ submission[4] or '无' }}</td>
+                        <td>
+                            {% if submission[5] %}
+                                <a href="{{ url_for('download_file', filename=submission[5].split('/')[-1]) }}" target="_blank">查看文件</a>
+                            {% else %}
+                                无
+                            {% endif %}
+                        </td>
+                        <td>{{ submission[6] }}</td>
+                        <td>{{ submission[7] or '未评分' }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('student.score_group_submission', submission_id=submission[0]) }}">
+                                <select name="score" class="form-select form-select-sm">
+                                    <option value="优秀" {% if submission[7] == '优秀' %}selected{% endif %}>优秀</option>
+                                    <option value="良好" {% if submission[7] == '良好' %}selected{% endif %}>良好</option>
+                                    <option value="合格" {% if submission[7] == '合格' %}selected{% endif %}>合格</option>
+                                    <option value="不合格" {% if submission[7] == '不合格' %}selected{% endif %}>不合格</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm mt-1">评分</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <nav class="bottom-nav navbar navbar-dark">
+        <ul class="nav w-100">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('student.dashboard') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                    </svg>
+                    <br>
+                    <small>首页</small>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('student.view_my_submissions') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-clipboard-check" viewBox="0 0 16 16">
+                        <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    <br>
+                    <small>我的提交</small>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('main.logout') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                        <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                    </svg>
+                    <br>
+                    <small>退出</small>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

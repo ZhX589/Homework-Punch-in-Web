@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}导入学生{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">通过CSV导入学生</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="file" class="form-label">选择CSV文件</label>
+            <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+            <small class="form-text text-muted">CSV文件格式：姓名,班级,小组,身份证后8位</small>
+        </div>
+        <button type="submit" class="btn btn-primary">导入</button>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

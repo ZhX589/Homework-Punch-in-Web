@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}布置作业{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">布置作业</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">作业标题</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">作业内容</label>
+            <textarea class="form-control" id="content" name="content" rows="5"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">上传文件（可选）</label>
+            <input type="file" class="form-control" id="file" name="file">
+            <small class="form-text text-muted">支持图片文件</small>
+        </div>
+        <div class="mb-3">
+                <label for="deadline" class="form-label">截止日期时间</label>
+                <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
+            </div>
+        <button type="submit" class="btn btn-primary">布置作业</button>
+        <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

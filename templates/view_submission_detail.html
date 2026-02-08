@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}查看提交详情{% endblock %}
+
+{% block sidebar %}
+    {% if session['role'] == 'teacher' %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.add_student') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.import_students') }}">
+            <i class="fas fa-file-import w-6"></i>
+            <span class="ml-2">导入学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.view_students') }}">
+            <i class="fas fa-users w-6"></i>
+            <span class="ml-2">查看学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.assign_assignment') }}">
+            <i class="fas fa-book w-6"></i>
+            <span class="ml-2">布置作业</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.view_assignments') }}">
+            <i class="fas fa-tasks w-6"></i>
+            <span class="ml-2">查看作业</span>
+        </a>
+    </li>
+    {% elif session['role'] == 'student' %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('student.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('student.view_my_submissions') }}">
+            <i class="fas fa-clipboard-check w-6"></i>
+            <span class="ml-2">我的提交</span>
+        </a>
+    </li>
+    {% endif %}
+{% endblock %}
+
+{% block bottom_nav %}
+    {% if session['role'] == 'teacher' %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.add_student') }}">
+            <i class="fas fa-user-plus"></i>
+            <small>学生</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.assign_assignment') }}">
+            <i class="fas fa-book"></i>
+            <small>作业</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+    {% elif session['role'] == 'student' %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('student.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('student.view_my_submissions') }}">
+            <i class="fas fa-clipboard-check"></i>
+            <small>我的提交</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title">提交详情</h1>
+        </div>
+    </div>
+    
+    <!-- 提交信息卡片 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">提交信息</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-item mb-3">
+                        <strong>作业标题：</strong>{{ submission[11] }}
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong>学生姓名：</strong>{{ submission[12] }}
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong>提交时间：</strong>{{ submission[7] }}
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong>评分：</strong>{{ submission[8] or '未评分' }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-item mb-3">
+                        <strong>班级：</strong>{{ submission[13] }}
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong>小组：</strong>{{ submission[14] }}
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong>学号：</strong>{{ submission[15] }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 作业内容卡片 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">作业内容</h5>
+        </div>
+        <div class="card-body">
+            {% if assignment_content %}
+            <div class="mb-4">
+                <h6 class="text-primary">布置的作业内容：</h6>
+                <div class="bubble bg-light p-4 rounded-lg border border-primary">
+                    {{ assignment_content }}
+                </div>
+            </div>
+            {% else %}
+            <div class="mb-4">
+                <h6 class="text-primary">布置的作业内容：</h6>
+                <div class="bubble bg-light p-4 rounded-lg border border-primary">
+                    无作业内容
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if content %}
+            <div class="mt-4">
+                <h6 class="text-success">学生提交的内容：</h6>
+                <div class="bubble bg-light p-4 rounded-lg border border-success">
+                    {{ content }}
+                </div>
+            </div>
+            {% else %}
+            <div class="mt-4">
+                <h6 class="text-success">学生提交的内容：</h6>
+                <div class="bubble bg-light p-4 rounded-lg border border-success">
+                    无提交内容
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- 提交图片卡片 -->
+    {% if image_file %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">提交图片</h5>
+        </div>
+        <div class="card-body">
+            <div class="image-container">
+                <img src="{{ url_for('main.download_file', filename=image_file) }}" alt="提交图片" class="img-fluid rounded-lg shadow">
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- 操作按钮 -->
+    <div class="row">
+        <div class="col-12">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>
+                返回
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <style>
+        .bubble {
+            transition: all 0.3s ease;
+        }
+        .bubble:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .info-item {
+            font-size: 0.95rem;
+        }
+    </style>
+{% endblock %}

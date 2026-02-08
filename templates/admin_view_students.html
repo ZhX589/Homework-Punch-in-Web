@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}查看学生{% endblock %}
+
+{% block sidebar %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.add_teacher') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加教师</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.add_student') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.import_students') }}">
+            <i class="fas fa-file-import w-6"></i>
+            <span class="ml-2">导入学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white active" href="{{ url_for('admin.view_students') }}">
+            <i class="fas fa-users w-6"></i>
+            <span class="ml-2">查看学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.view_teachers') }}">
+            <i class="fas fa-chalkboard-teacher w-6"></i>
+            <span class="ml-2">查看教师</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.reset_system') }}">
+            <i class="fas fa-redo w-6"></i>
+            <span class="ml-2">重置系统</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block bottom_nav %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('admin.add_teacher') }}">
+            <i class="fas fa-user-plus"></i>
+            <small>添加</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('admin.view_students') }}">
+            <i class="fas fa-users"></i>
+            <small>查看</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title">查看所有学生</h1>
+        </div>
+    </div>
+    
+    {% if students %}
+        <div class="row">
+            {% for student in students %}
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title">{{ student[1] }}</h5>
+                                {% if student[7] %}
+                                    <span class="badge badge-success">组长</span>
+                                {% endif %}
+                            </div>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-building mr-2 text-primary"></i>
+                                    <span>班级：{{ student[2] }}</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-users mr-2 text-success"></i>
+                                    <span>小组：{{ student[3] }}</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-id-card mr-2 text-info"></i>
+                                    <span>身份证后8位：{{ student[4] }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-user-graduate fa-4x text-muted mb-4"></i>
+                <h5 class="card-title">暂无学生信息</h5>
+                <p class="card-text">请添加学生后再查看</p>
+                <a href="{{ url_for('admin.add_student') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    添加学生
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

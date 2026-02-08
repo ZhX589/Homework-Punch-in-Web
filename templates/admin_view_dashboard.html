@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}综合查看{% endblock %}
+
+{% block sidebar %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.add_teacher') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加教师</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.add_student') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.import_students') }}">
+            <i class="fas fa-file-import w-6"></i>
+            <span class="ml-2">导入学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white active" href="{{ url_for('admin.view_dashboard') }}">
+            <i class="fas fa-dashboard w-6"></i>
+            <span class="ml-2">综合查看</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.view_students') }}">
+            <i class="fas fa-users w-6"></i>
+            <span class="ml-2">学生信息</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.view_teachers') }}">
+            <i class="fas fa-chalkboard-teacher w-6"></i>
+            <span class="ml-2">教师信息</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('admin.reset_system') }}">
+            <i class="fas fa-redo w-6"></i>
+            <span class="ml-2">重置系统</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block bottom_nav %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('admin.add_teacher') }}">
+            <i class="fas fa-user-plus"></i>
+            <small>添加</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('admin.view_dashboard') }}">
+            <i class="fas fa-dashboard"></i>
+            <small>综合查看</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title">综合查看</h1>
+        </div>
+    </div>
+    
+    <!-- 统计概览 -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_students }}</div>
+                <div class="stat-label">总学生数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_teachers }}</div>
+                <div class="stat-label">总教师数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_assignments }}</div>
+                <div class="stat-label">总作业数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_submissions }}</div>
+                <div class="stat-label">总提交数</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图表区域 -->
+    <div class="row mb-4">
+        <div class="col-lg-6 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">提交时间折线图</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="submissionTimeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">提交数树状图</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="submissionCountChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 学生信息卡片 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">学生信息概览</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for student in students[:6] %}
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ student[1] }}</h6>
+                                    <p class="card-text">
+                                        <strong>学号：</strong>{{ student[0] }}<br>
+                                        <strong>班级：</strong>{{ student[2] }}<br>
+                                        <strong>小组：</strong>{{ student[3] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if students|length > 6 %}
+                    <div class="mt-4">
+                        <a href="{{ url_for('admin.view_students') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            查看全部学生
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 教师信息卡片 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">教师信息概览</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for teacher in teachers[:6] %}
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ teacher[1] }}</h6>
+                                    <p class="card-text">
+                                        <strong>工号：</strong>{{ teacher[0] }}<br>
+                                        <strong>班级：</strong>{{ teacher[2] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if teachers|length > 6 %}
+                    <div class="mt-4">
+                        <a href="{{ url_for('admin.view_teachers') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            查看全部教师
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 作业完成情况卡片 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">作业完成情况概览</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for assignment in assignments[:6] %}
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title"><a href="{{ url_for('admin.assignment_detail', assignment_id=assignment.id) }}" class="text-primary">{{ assignment.title }}</a></h6>
+                                    <p class="card-text">
+                                        <strong>发布日期：</strong>{{ assignment.assigned_date }}<br>
+                                        <strong>截止日期：</strong>{{ assignment.due_date }}<br>
+                                        <strong>提交率：</strong>{{ "%.2f"|format(assignment.completion_rate) }}%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if assignments|length > 6 %}
+                    <div class="mt-4">
+                        <a href="{{ url_for('admin.analyze_assignment') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            查看全部作业
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // 提交时间折线图
+        const submissionTimeCtx = document.getElementById('submissionTimeChart').getContext('2d');
+        const submissionTimeChart = new Chart(submissionTimeCtx, {
+            type: 'line',
+            data: {
+                labels: {{ submission_dates|tojson }},
+                datasets: [{
+                    label: '每日提交数',
+                    data: {{ submission_counts|tojson }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: '提交时间趋势'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 提交数树状图（柱状图）
+        const submissionCountCtx = document.getElementById('submissionCountChart').getContext('2d');
+        const submissionCountChart = new Chart(submissionCountCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ class_names|tojson }},
+                datasets: [{
+                    label: '班级提交数',
+                    data: {{ class_submission_counts|tojson }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: '各班级提交数对比'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

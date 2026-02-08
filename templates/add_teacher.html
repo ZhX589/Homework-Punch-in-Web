@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}添加教师{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">添加教师</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">姓名</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="class_id" class="form-label">班级</label>
+            <input type="text" class="form-control" id="class_id" name="class_id" required>
+            <small class="form-text text-muted">例如：高一18班为 118，高二1班为 201</small>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">默认密码</label>
+            <input type="text" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">添加教师</button>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

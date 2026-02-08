@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}学生后台{% endblock %}
+
+{% block sidebar %}
+    <li class="nav-item">
+        <a class="nav-link text-white active" href="{{ url_for('student.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('student.view_my_submissions') }}">
+            <i class="fas fa-clipboard-check w-6"></i>
+            <span class="ml-2">我的提交</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block bottom_nav %}
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('student.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('student.view_my_submissions') }}">
+            <i class="fas fa-clipboard-check"></i>
+            <small>我的提交</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title">学生后台</h1>
+            <p>欢迎，{{ session['name'] }}同学！</p>
+            <p>班级：{{ session['class_id'] }}</p>
+            <p>小组：{{ session['group_id'] }}</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">待完成作业</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>作业标题</th>
+                            <th>截止日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment in assignments %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><a href="{{ url_for('student.assignment_detail', assignment_id=assignment[0]) }}" class="text-primary">{{ assignment[3] }}</a></td>
+                            <td>{{ assignment[6] }}</td>
+                            <td>
+                                <a href="{{ url_for('student.submit_assignment', assignment_id=assignment[0]) }}" class="btn btn-primary btn-sm">提交作业</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

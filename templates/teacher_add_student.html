@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}添加学生{% endblock %}
+
+{% block sidebar %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white active" href="{{ url_for('teacher.add_student') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.import_students') }}">
+            <i class="fas fa-file-import w-6"></i>
+            <span class="ml-2">导入学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.view_students') }}">
+            <i class="fas fa-users w-6"></i>
+            <span class="ml-2">查看学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.assign_assignment') }}">
+            <i class="fas fa-book w-6"></i>
+            <span class="ml-2">布置作业</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.view_assignments') }}">
+            <i class="fas fa-tasks w-6"></i>
+            <span class="ml-2">查看作业</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block bottom_nav %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('teacher.add_student') }}">
+            <i class="fas fa-user-plus"></i>
+            <small>学生</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.assign_assignment') }}">
+            <i class="fas fa-book"></i>
+            <small>作业</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title">添加学生</h1>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">姓名</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="class_id" class="form-label">班级</label>
+                    <input type="text" class="form-control" id="class_id" name="class_id" value="{{ session['class_id'] }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="group_id" class="form-label">小组序号</label>
+                    <input type="number" class="form-control" id="group_id" name="group_id" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card_last8" class="form-label">身份证后8位</label>
+                    <input type="text" class="form-control" id="id_card_last8" name="id_card_last8" required>
+                </div>
+                <button type="submit" class="btn btn-primary">添加学生</button>
+                <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">取消</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

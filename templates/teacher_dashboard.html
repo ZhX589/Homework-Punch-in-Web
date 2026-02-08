@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}教师后台{% endblock %}
+
+{% block sidebar %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.dashboard') }}">
+            <i class="fas fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.add_student') }}">
+            <i class="fas fa-user-plus w-6"></i>
+            <span class="ml-2">添加学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.import_students') }}">
+            <i class="fas fa-file-import w-6"></i>
+            <span class="ml-2">导入学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.view_students') }}">
+            <i class="fas fa-users w-6"></i>
+            <span class="ml-2">查看学生</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.assign_assignment') }}">
+            <i class="fas fa-book w-6"></i>
+            <span class="ml-2">布置作业</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('teacher.view_assignments') }}">
+            <i class="fas fa-tasks w-6"></i>
+            <span class="ml-2">查看作业</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block bottom_nav %}
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('teacher.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <small>首页</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.add_student') }}">
+            <i class="fas fa-user-plus"></i>
+            <small>学生</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('teacher.assign_assignment') }}">
+            <i class="fas fa-book"></i>
+            <small>作业</small>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.logout') }}">
+            <i class="fas fa-sign-out-alt"></i>
+            <small>退出</small>
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <h1 class="page-title">教师后台</h1>
+            <p>欢迎，{{ session['name'] }}老师！</p>
+            <p>班级：{{ session['class_id'] }}</p>
+        </div>
+    </div>
+    
+    <!-- 统计卡片 -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ class_students }}</div>
+                <div class="stat-label">班级学生数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ class_assignments }}</div>
+                <div class="stat-label">班级作业数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_submissions }}</div>
+                <div class="stat-label">班级提交数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ "%.2f"|format(class_completion_rate) }}%</div>
+                <div class="stat-label">班级总提交率</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 今日统计 -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ today_class_submissions }}</div>
+                <div class="stat-label">今日提交数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ today_class_expected_submissions }}</div>
+                <div class="stat-label">今日应提交数</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="stat-card">
+                <div class="stat-value">{{ "%.2f"|format(today_class_completion_rate) }}%</div>
+                <div class="stat-label">今日提交率</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 功能卡片 -->
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary rounded-circle p-3 mr-3">
+                            <i class="fas fa-user-plus text-white"></i>
+                        </div>
+                        <h5 class="card-title">添加学生</h5>
+                    </div>
+                    <p class="card-text">手动添加新的学生用户</p>
+                    <a href="{{ url_for('teacher.add_student') }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right mr-2"></i>
+                        前往
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success rounded-circle p-3 mr-3">
+                            <i class="fas fa-file-import text-white"></i>
+                        </div>
+                        <h5 class="card-title">导入学生</h5>
+                    </div>
+                    <p class="card-text">通过CSV文件批量导入学生</p>
+                    <a href="{{ url_for('teacher.import_students') }}" class="btn btn-success">
+                        <i class="fas fa-arrow-right mr-2"></i>
+                        前往
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-info rounded-circle p-3 mr-3">
+                            <i class="fas fa-users text-white"></i>
+                        </div>
+                        <h5 class="card-title">查看学生</h5>
+                    </div>
+                    <p class="card-text">查看本班学生信息，包括班级和小组</p>
+                    <a href="{{ url_for('teacher.view_students') }}" class="btn btn-info">
+                        <i class="fas fa-arrow-right mr-2"></i>
+                        前往
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-warning rounded-circle p-3 mr-3">
+                            <i class="fas fa-book text-white"></i>
+                        </div>
+                        <h5 class="card-title">布置作业</h5>
+                    </div>
+                    <p class="card-text">布置新的作业任务</p>
+                    <a href="{{ url_for('teacher.assign_assignment') }}" class="btn btn-warning">
+                        <i class="fas fa-arrow-right mr-2"></i>
+                        前往
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-danger rounded-circle p-3 mr-3">
+                            <i class="fas fa-tasks text-white"></i>
+                        </div>
+                        <h5 class="card-title">查看作业</h5>
+                    </div>
+                    <p class="card-text">查看已布置的作业和学生提交情况</p>
+                    <a href="{{ url_for('teacher.view_assignments') }}" class="btn btn-danger">
+                        <i class="fas fa-arrow-right mr-2"></i>
+                        前往
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图表区域 -->
+    <div class="row mb-4">
+        <div class="col-lg-6 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">班级总提交率统计</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="classCompletionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">今日提交率统计</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="todayClassCompletionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // 班级总提交率饼状图
+        const classCompletionCtx = document.getElementById('classCompletionChart').getContext('2d');
+        const classCompletionChart = new Chart(classCompletionCtx, {
+            type: 'pie',
+            data: {
+                labels: ['已提交', '未提交'],
+                datasets: [{
+                    data: [{{ class_completion_rate }}, 100 - {{ class_completion_rate }}],
+                    backgroundColor: ['#4CAF50', '#F44336'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: '班级总提交率'
+                    }
+                }
+            }
+        });
+        
+        // 今日本班提交率饼状图
+        const todayClassCompletionCtx = document.getElementById('todayClassCompletionChart').getContext('2d');
+        const todayClassCompletionChart = new Chart(todayClassCompletionCtx, {
+            type: 'pie',
+            data: {
+                labels: ['已提交', '未提交'],
+                datasets: [{
+                    data: [{{ today_class_completion_rate }}, 100 - {{ today_class_completion_rate }}],
+                    backgroundColor: ['#2196F3', '#FF9800'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: '今日本班提交率'
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

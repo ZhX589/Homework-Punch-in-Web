@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}重置系统{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">重置系统</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">警告</h5>
+            <p class="card-text text-danger">重置系统将清空所有数据，包括：</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">所有用户信息（教师和学生）</li>
+                <li class="list-group-item">所有作业信息</li>
+                <li class="list-group-item">所有作业提交</li>
+                <li class="list-group-item">所有上传的文件</li>
+            </ul>
+            <p class="card-text mt-3">此操作不可恢复，请谨慎执行！</p>
+            <form method="POST">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="confirm" name="confirm" required>
+                    <label class="form-check-label" for="confirm">我确认要重置系统</label>
+                </div>
+                <button type="submit" class="btn btn-danger">执行重置</button>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">取消</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

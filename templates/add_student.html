@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}添加学生{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">添加学生</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">姓名</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="class_id" class="form-label">班级</label>
+            <input type="text" class="form-control" id="class_id" name="class_id" required>
+            <small class="form-text text-muted">例如：高一18班为 118，高二1班为 201</small>
+        </div>
+        <div class="mb-3">
+            <label for="group_id" class="form-label">小组</label>
+            <input type="number" class="form-control" id="group_id" name="group_id" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_card_last8" class="form-label">身份证后8位</label>
+            <input type="text" class="form-control" id="id_card_last8" name="id_card_last8" required>
+        </div>
+        <button type="submit" class="btn btn-primary">添加学生</button>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

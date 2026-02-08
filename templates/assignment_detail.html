@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}作业详情{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-20">
+    <h1 class="h4 mb-4">作业详情</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ assignment.title }}</h5>
+            
+            <div class="mb-4">
+                <h6 class="text-muted">作业信息</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                        <strong>发布日期：</strong>{{ assignment.created_at }}
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-clock mr-2 text-success"></i>
+                        <strong>截止日期：</strong>{{ assignment.deadline }}
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-building mr-2 text-info"></i>
+                        <strong>班级：</strong>{{ assignment.class_id }}
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mb-4">
+                <h6 class="text-muted">作业内容</h6>
+                <div class="card bg-light p-4">
+                    {{ assignment.content|default('无作业内容', true) }}
+                </div>
+            </div>
+            
+            {% if assignment.file_path %}
+            <div class="mb-4">
+                <h6 class="text-muted">上传的文件</h6>
+                <div class="card bg-light p-4">
+                    {% set filename = assignment.file_path.replace('\\', '/').split('/')[-1] %}
+                    {% set file_extension = filename.split('.')[-1].lower() %}
+                    {% if file_extension in ['jpg', 'jpeg', 'png', 'gif'] %}
+                        <img src="{{ url_for('main.download_file', filename=filename) }}" alt="作业文件" class="img-fluid rounded">
+                    {% else %}
+                        <a href="{{ url_for('main.download_file', filename=filename) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-download mr-2"></i>
+                            <span>下载文件</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if session['role'] == 'teacher' or session['role'] == 'admin' %}
+            <div class="mt-4">
+                <h6 class="text-muted">作业统计</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ submission_count }}</div>
+                            <div class="stat-label">已提交</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ total_students }}</div>
+                            <div class="stat-label">应提交</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ "%.1f"|format(completion_rate) }}%</div>
+                            <div class="stat-label">提交率</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{{ url_for('teacher.view_submissions', assignment_id=assignment.id) }}" class="btn btn-primary">
+                    <i class="fas fa-list mr-2"></i>
+                    查看提交情况
+                </a>
+                <a href="{{ url_for('teacher.analyze_assignment', assignment_id=assignment.id) }}" class="btn btn-outline-primary ml-2">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    分析作业
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
